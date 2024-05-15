@@ -1,14 +1,31 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
   const searchParams = new URL(document.location.toString()).searchParams
   const hashedId = searchParams.get('hashedId') ?? ''
+  const [token, setToken] = useState('')
+
+  useEffect(() => {
+    async function setTokenFromServer() {
+      const response = await fetch('http://localhost:5432/expiring_token')
+      const json = await response.json()
+      const tokenFromServer = json.token
+
+      if (typeof tokenFromServer === 'string') {
+        setToken(tokenFromServer)
+      }
+    }
+
+    void setTokenFromServer();
+  }, [])
+
 
   return (
     <div>
       <h2>Look at my transcript</h2>
-      <iframe title="embed" src={`https://embed.wistia.io/transcript-edit/embed/?hashedId=${hashedId}&token=expiring_token_384f92e50a1e264caa985e9e6f7b595a6897fd9d493dd41f916cfafd758673ff`} />
+      <iframe title="embed" src={`https://embed.wistia.io/transcript-edit/embed/?hashedId=${hashedId}&token=${token}`} />
     </div>
   );
 }
