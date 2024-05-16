@@ -14,8 +14,8 @@ app.use((req, res, next) => {
 app.get('/expiring_token/:mediaHashedId', (req, res) => {
   const postData = {
     expiring_access_token: {
-      authorization: [
-        {type: 'media', asset_id: req.params.mediaHashedId, permissions: ['edit-transcripts']}
+      authorizations: [
+        {type: 'media', id: req.params.mediaHashedId, permissions: ['edit-transcripts']}
       ]
     }
   }
@@ -33,10 +33,12 @@ app.get('/expiring_token/:mediaHashedId', (req, res) => {
     let data = '';
 
     wistiaResponse.on('data', (chunk) => {
+      console.log(chunk)
       data += chunk;
     });
 
     wistiaResponse.on('end', () => {
+      console.log(data)
       res.status(wistiaResponse.statusCode ?? 500).json(JSON.parse(data));
     });
   })

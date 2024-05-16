@@ -28,7 +28,7 @@ function App() {
   return (
     <div>
       <h2>Look at my transcript</h2>
-      <iframe title="embed" src={`https://embed.wistia.io/transcript-edit/embed/?hashedId=${hashedId}&token=${token}`} />
+      <iframe title="embed" src={`https://embed.wistia.io/transcript-edit/embed/?hashedId=${hashedId}&token=${token}`} sandbox="allow-scripts allow-same-origin" />
     </div>
   );
 }
