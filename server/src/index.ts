@@ -11,11 +11,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello, TypeScript with Express!');
-});
-
-app.get('/expiring_token', (req, res) => {
+app.get('/expiring_token/:mediaHashedId', (req, res) => {
+  const postData = {
+    expiring_access_token: {
+      authorization: [
+        {type: 'media', asset_id: req.params.mediaHashedId, permissions: ['edit-transcripts']}
+      ]
+    }
+  }
   const options = {
     hostname: 'api.wistia.io', // TODO: make this configurable
     port: 443,
@@ -42,6 +45,7 @@ app.get('/expiring_token', (req, res) => {
     console.error(`Problem with request: ${e.message}`);
   });
 
+  wistiaRequest.write(JSON.stringify(postData));
   wistiaRequest.end();
 });
 
