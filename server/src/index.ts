@@ -1,5 +1,6 @@
 import express from 'express';
 import https from 'https';
+import { Request, Response, NextFunction } from 'express';
 
 const app = express();
 const port = 5432;
@@ -10,8 +11,17 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack)
+  res.status(500).send('Something broke!')
+})
 
-app.get('/expiring_token/:mediaHashedId', (req, res) => {
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).send('Something broke!');
+// });
+
+app.get('/expiring_token/:mediaHashedId', (req, res, next) => {
   const postData = {
     expiring_access_token: {
       authorizations: [
@@ -33,13 +43,15 @@ app.get('/expiring_token/:mediaHashedId', (req, res) => {
     let data = '';
 
     wistiaResponse.on('data', (chunk) => {
-      console.log(chunk)
       data += chunk;
     });
 
     wistiaResponse.on('end', () => {
-      console.log(data)
-      res.status(wistiaResponse.statusCode ?? 500).json(JSON.parse(data));
+      try {
+        res.status(wistiaResponse.statusCode ?? 500).json(JSON.parse(data));
+      } catch (e) {
+        next(e)
+      }
     });
   })
 
