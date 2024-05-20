@@ -8,8 +8,9 @@ function App() {
   const [token, setToken] = useState<string | undefined>()
 
   useEffect(() => {
+    const controller = new AbortController()
     async function setTokenFromServer() {
-      const response = await fetch(`http://localhost:5432/expiring_token/${hashedId}`)
+      const response = await fetch(`http://localhost:5432/expiring_token/${hashedId}`, { signal: controller.signal })
       const json = await response.json()
       const tokenFromServer = json.token
 
@@ -18,8 +19,12 @@ function App() {
       }
     }
 
-    void setTokenFromServer();
-  }, [hashedId])
+    if (!token) {
+      void setTokenFromServer();
+    }
+
+    return () => controller.abort();
+  }, [hashedId, token])
 
   if (token === undefined) {
     return null;
