@@ -11,6 +11,7 @@ function App() {
 
   useEffect(() => {
     const controller = new AbortController()
+
     async function setTokenFromServer() {
       const response = await fetch(`http://localhost:5432/expiring_token/${hashedId}`, { signal: controller.signal })
       const json = await response.json()
@@ -21,11 +22,16 @@ function App() {
       }
     }
 
+    // Fire off immediately and than every five seconds after that
     if (!token) {
       void setTokenFromServer();
     }
+    const id = setInterval(setTokenFromServer, 5000)
 
-    return () => controller.abort();
+    return () => {
+      clearInterval(id);
+      controller.abort();
+    }
   }, [hashedId, token])
 
   useEffect(() => {
