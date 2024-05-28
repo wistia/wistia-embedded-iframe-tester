@@ -7,6 +7,7 @@ function App() {
   const hashedId = searchParams.get('hashedId') ?? ''
   const [token, setToken] = useState<string | undefined>()
   const [iframeRendered, setRendered] = useState<boolean>()
+  const iframeOrigin = 'https://embed.wistia.io'
 
   useEffect(() => {
     const controller = new AbortController()
@@ -31,6 +32,10 @@ function App() {
     const iframeMessageListener = (event: MessageEvent) => {
       const { data } = event as { data: { type?: string; value?: boolean } };
 
+      if (event.origin !== iframeOrigin) {
+        return;
+      }
+
       if (data.type === 'rendered') {
         setRendered(!!data.value);
       }
@@ -45,14 +50,14 @@ function App() {
 
   useEffect(() => {
     if (iframeRendered) {
-      document.querySelector('iframe')?.contentWindow?.postMessage({type: 'token', value: token}, 'https://embed.wistia.io')
+      document.querySelector('iframe')?.contentWindow?.postMessage({type: 'token', value: token}, iframeOrigin)
     }
   }, [token, iframeRendered]);
 
   return (
     <div>
       <h2>Look at my transcript</h2>
-      <iframe title="embed" src={`https://embed.wistia.io/transcript-edit/embed/?hashedId=${hashedId}`} sandbox="allow-scripts allow-same-origin allow-modals" />
+      <iframe title="embed" src={`${iframeOrigin}/transcript-edit/embed/?hashedId=${hashedId}`} sandbox="allow-scripts allow-same-origin allow-modals" />
     </div>
   );
 }
