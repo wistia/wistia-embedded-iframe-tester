@@ -45,7 +45,7 @@ function App() {
 
   useEffect(() => {
     if (iframeRendered) {
-      document.querySelector('iframe')?.contentWindow?.postMessage({type: 'token', value: token}, '*')
+      document.querySelector('iframe')?.contentWindow?.postMessage({type: 'token', value: token}, 'https://embed.wistia.io')
     }
   }, [token, iframeRendered]);
 
