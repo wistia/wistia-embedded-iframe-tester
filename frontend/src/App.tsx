@@ -24,7 +24,13 @@ function App() {
 
     // Fire off immediately and than every five seconds after that
     if (!token) {
-      void setTokenFromServer();
+      void setTokenFromServer().catch((error) => {
+        if (error.name === 'AbortError') {
+          return;
+        }
+
+        throw error;
+      });
     }
     const id = setInterval(setTokenFromServer, 5000)
 
