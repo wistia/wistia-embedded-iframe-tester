@@ -48,7 +48,7 @@ function App() {
         return;
       }
 
-      if (data.type === 'rendered') {
+      if (data.type === 'listening') {
         setRendered(!!data.value);
       }
     };
