@@ -2,18 +2,20 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import './App.css';
 
+const iframeOrigin = process.env.REACT_APP_IFRAME_EMBED_URL ?? 'https://embed.wistia.io'
+const searchParams = new URL(document.location.toString()).searchParams
+const hashedId = searchParams.get('hashedId') ?? ''
+const serverDomain = process.env.REACT_APP_SERVER_ORIGIN ?? 'http://localhost:5432'
+
 function App() {
-  const searchParams = new URL(document.location.toString()).searchParams
-  const hashedId = searchParams.get('hashedId') ?? ''
   const [token, setToken] = useState<string | undefined>()
   const [iframeRendered, setRendered] = useState<boolean>()
-  const iframeOrigin = 'https://embed.wistia.io'
 
   useEffect(() => {
     const controller = new AbortController()
 
     async function setTokenFromServer() {
-      const response = await fetch(`http://localhost:5432/expiring_token/${hashedId}`, { signal: controller.signal })
+      const response = await fetch(`${serverDomain}/expiring_token/${hashedId}`, { signal: controller.signal })
       const json = await response.json()
       const tokenFromServer = json.token
 
@@ -36,7 +38,7 @@ function App() {
       clearInterval(id);
       controller.abort();
     }
-  }, [hashedId])
+  }, [])
 
   useEffect(() => {
     const iframeMessageListener = (event: MessageEvent) => {

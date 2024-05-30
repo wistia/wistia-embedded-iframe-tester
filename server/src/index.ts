@@ -3,23 +3,24 @@ import https from 'https';
 import { Request, Response, NextFunction } from 'express';
 
 const app = express();
-const port = 5432;
+const port = Number(process.env.SERVER_PORT) ?? 5000;
+const permanentToken = process.env.WISTIA_PERMANENT_TOKEN
+const wistiaHost = process.env.WISTIA_SUBDOMAIN ?? 'api.wistia.io';
 
-app.use((req, res, next) => {
+if (!permanentToken) {
+  throw new Error('The WISTIA_PERMANENT_TOKEN environment variable must be set')
+}
+
+app.use((_req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // Allows all origins
   res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack)
   res.status(500).send('Something broke!')
 })
-
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).send('Something broke!');
-// });
 
 app.get('/expiring_token/:mediaHashedId', (req, res, next) => {
   const expiresAt = new Date();
@@ -34,13 +35,13 @@ app.get('/expiring_token/:mediaHashedId', (req, res, next) => {
     }
   }
   const options = {
-    hostname: 'api.wistia.io', // TODO: make this configurable
+    hostname: wistiaHost,
     port: 443,
     path: '/v1/expiring_token.json',
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.WISTIA_PERMANENT_TOKEN}`,
+      'Authorization': `Bearer ${permanentToken}`,
     }
   }
   const wistiaRequest = https.request(options, (wistiaResponse) => {
