@@ -23,22 +23,20 @@ function App() {
     }
 
     // Fire off immediately and than every five seconds after that
-    if (!token) {
-      void setTokenFromServer().catch((error) => {
-        if (error.name === 'AbortError') {
-          return;
-        }
+    void setTokenFromServer().catch((error) => {
+      if (error.name === 'AbortError') {
+        return;
+      }
 
-        throw error;
-      });
-    }
+      throw error;
+    });
     const id = setInterval(setTokenFromServer, 5000)
 
     return () => {
       clearInterval(id);
       controller.abort();
     }
-  }, [hashedId, token])
+  }, [hashedId])
 
   useEffect(() => {
     const iframeMessageListener = (event: MessageEvent) => {
