@@ -22,8 +22,12 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 // });
 
 app.get('/expiring_token/:mediaHashedId', (req, res, next) => {
+  const expiresAt = new Date();
+  expiresAt.setMinutes(expiresAt.getMinutes() + 1);
+
   const postData = {
     expiring_access_token: {
+      expires_at: expiresAt,
       authorizations: [
         {type: 'media', id: req.params.mediaHashedId, permissions: ['edit-transcripts']}
       ]
