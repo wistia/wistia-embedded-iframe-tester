@@ -12,18 +12,13 @@ to create a permanent token. Make sure to store this token somewhere safe.
 In one terminal run:
 
 ```sh
-cd server
-WISTIA_PERMANENT_TOKEN=<the-token-you-created> npm start
+WISTIA_PERMANENT_TOKEN=<the-token-you-created> docker compose up
 ```
 
-In another run:
+This will start an nginx server pointing to both the frontend and backend
+servers for development on `http://localhost:5050`. When you have a media
+on the account with the permanent token mentioned above, you can navigate to:
+`http://localhost:5050/?hashedId=<hashed-id>` to edit that media's transcript.
 
-```sh
-cd frontend
-npm start
-```
-
-In the react app you can then add `?hashedId=<a-hashed-id>` which than will be used to load
-the correct media in the iframe. The react app makes a request to the express app which
-than requests the expiring token from wistia and returns it to the frontend. This token
-is also used in the iframe.
+NOTE: For backend changes (both nginx and the backend server) you need to
+restart docker. For changes to the frontend you just need to refresh the page.

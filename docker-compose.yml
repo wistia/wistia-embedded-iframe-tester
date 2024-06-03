@@ -1,0 +1,38 @@
+version: '3.9'
+services:
+  nginx:
+    image: nginx:1.23-alpine
+    volumes:
+      - ./nginx:/nginx-conf
+    working_dir: /nginx-conf
+    command: nginx -c /nginx-conf/nginx.conf
+    depends_on:
+      - backend
+    ports:
+      - '5050:5050'
+  backend:
+    image: node:22-alpine
+    volumes:
+      - ./backend:/backend
+    working_dir: /backend
+    command: npm start
+    entrypoint: /backend/entrypoint
+    environment:
+      - WISTIA_SUBDOMAIN=${WISTIA_SUBDOMAIN:-api.wistia.io}
+      - SERVER_PORT=${SERVER_PORT:-5151}
+      - WISTIA_PERMANENT_TOKEN
+    extra_hosts:
+      - api.wistia.io:host-gateway
+  frontend:
+    image: node:22-alpine
+    volumes:
+      - ./frontend:/frontend
+    working_dir: /frontend
+    command: npm start
+    entrypoint: /frontend/entrypoint
+    environment:
+      - REACT_APP_IFRAME_EMBED_URL=${REACT_APP_IFRAME_EMBED_URL:-https://embed.wistia.io}
+      - REACT_APP_SERVER_ORIGIN=${REACT_APP_SERVER_ORIGIN:-http://localhost:5050}
+      - PORT=5252
+    extra_hosts:
+      - api.wistia.io:host-gateway
