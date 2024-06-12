@@ -31,7 +31,7 @@ services:
     command: npm start
     entrypoint: /frontend/entrypoint
     environment:
-      - REACT_APP_IFRAME_EMBED_URL=${REACT_APP_IFRAME_EMBED_URL:-https://embed.wistia.io}
+      - REACT_APP_IFRAME_EMBED_URL=${REACT_APP_IFRAME_EMBED_URL:-https://fast.wistia.io}
       - REACT_APP_SERVER_ORIGIN=${REACT_APP_SERVER_ORIGIN:-http://localhost:5050}
       - PORT=5252
     extra_hosts:
