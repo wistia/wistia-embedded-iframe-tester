@@ -17,16 +17,18 @@
     }
   </style>
   <script>
-    const searchParams = new URL(document.location.toString()).searchParams
-    const hashedId = searchParams.get('hashedId') || ''
+    const searchParams = new URL(document.location.toString()).searchParams;
+    const hashedId = searchParams.get('hashedId') || '';
     const iframeOrigin = 'https://fast.wistia.io';
 
-    async function renderIframeWhenReady() {
+    async function grabTokenFromServer() {
       const response = await fetch(`http://localhost:5050/expiring_token/${hashedId}`);
       const json = await response.json();
-      const tokenFromServer = json.token;
+      return  json.token;
+    }
 
-      const promise = new Promise((resolve, reject) => {
+    function addEventListenerForIFrameAndPromiseOnIframeListening() {
+      return new Promise((resolve, reject) => {
         const iframeMessageListener = (event) => {
           const { data } = event;
 
@@ -41,14 +43,23 @@
 
         window.addEventListener('message', iframeMessageListener);
       });
+    }
 
-
+    function insertIFrameIntoDocument() {
       document.querySelector('#iframe-container')
         .insertAdjacentHTML('beforeend', `<iframe title="embed" src="https://fast.wistia.io/transcript-edit/embed/?hashedId=${hashedId}" sandbox="allow-scripts allow-same-origin allow-modals" />`);
+    }
 
-      await promise;
-
+    function sendTokenToIframe(tokenFromServer) {
       document.querySelector('iframe')?.contentWindow?.postMessage({type: 'token', value: tokenFromServer}, iframeOrigin)
+    }
+
+    async function renderIframeWhenReady() {
+      const tokenFromServer = await grabTokenFromServer();
+      const promise = addEventListenerForIFrameAndPromiseOnIframeListening();
+      insertIFrameIntoDocument();
+      await promise;
+      sendTokenToIframe(tokenFromServer);
     }
 
     renderIframeWhenReady();
