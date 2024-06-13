@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Embed</title>
+</head>
+
+<body>
+  <h1>Page Title</h1>
+  <div id="iframe-container"></div>
+  <style>
+    iframe {
+      width: 90vw;
+      height: 90vh;
+    }
+  </style>
+  <script>
+    const searchParams = new URL(document.location.toString()).searchParams
+    const hashedId = searchParams.get('hashedId') || ''
+    const iframeOrigin = 'https://fast.wistia.io';
+
+    async function renderIframeWhenReady() {
+      const response = await fetch(`http://localhost:5050/expiring_token/${hashedId}`);
+      const json = await response.json();
+      const tokenFromServer = json.token;
+
+      const promise = new Promise((resolve, reject) => {
+        const iframeMessageListener = (event) => {
+          const { data } = event;
+
+          if (event.origin !== iframeOrigin) {
+            return;
+          }
+
+          if (data.type === 'listening') {
+            resolve();
+          }
+        }
+
+        window.addEventListener('message', iframeMessageListener);
+      });
+
+
+      document.querySelector('#iframe-container')
+        .insertAdjacentHTML('beforeend', `<iframe title="embed" src="https://fast.wistia.io/transcript-edit/embed/?hashedId=${hashedId}" sandbox="allow-scripts allow-same-origin allow-modals" />`);
+
+      await promise;
+
+      document.querySelector('iframe')?.contentWindow?.postMessage({type: 'token', value: tokenFromServer}, iframeOrigin)
+    }
+
+    renderIframeWhenReady();
+  </script>
+</body>
+</html>
