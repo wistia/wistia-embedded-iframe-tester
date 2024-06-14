@@ -5,17 +5,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Embed</title>
-</head>
-
-<body>
-  <h1>Page Title</h1>
-  <div id="iframe-container"></div>
   <style>
     iframe {
       width: 90vw;
       height: 90vh;
     }
   </style>
+</head>
+
+<body>
+  <h1>Page Title</h1>
+  <div id="iframe-container"></div>
   <script>
     const searchParams = new URL(document.location.toString()).searchParams;
     const hashedId = searchParams.get('hashedId') || '';
