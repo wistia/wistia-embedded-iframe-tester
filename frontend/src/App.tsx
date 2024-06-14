@@ -68,7 +68,7 @@ function App() {
 
   return (
     <div>
-      <h2>Look at my transcript</h2>
+      <h1>React in TypeScript embed example</h1>
       <iframe title="embed" src={`${iframeOrigin}/transcript-edit/embed/?hashedId=${hashedId}`} sandbox="allow-scripts allow-same-origin allow-modals" />
     </div>
   );
