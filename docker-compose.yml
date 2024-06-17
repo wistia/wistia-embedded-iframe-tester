@@ -36,3 +36,11 @@ services:
       - PORT=5252
     extra_hosts:
       - api.wistia.io:host-gateway
+  frontend-vanilla:
+    image: nginx:1.23-alpine
+    volumes:
+      - ./frontend-vanilla:/nginx-conf
+    working_dir: /nginx-conf
+    command: nginx -c /nginx-conf/nginx.conf
+    ports:
+      - '8080:8080'

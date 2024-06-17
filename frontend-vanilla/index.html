@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vanilla JS embed example</title>
+  <style>
+    iframe {
+      width: 90vw;
+      height: 90vh;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Vanilla JS embed example</h1>
+  <div id="iframe-container"></div>
+  <script>
+    const searchParams = new URL(document.location.toString()).searchParams;
+    const hashedId = searchParams.get('hashedId') || '';
+    const iframeOrigin = 'https://fast.wistia.io';
+
+    async function grabTokenFromServer() {
+      const response = await fetch(`http://localhost:5050/expiring_token/${hashedId}`);
+      const json = await response.json();
+      return  json.token;
+    }
+
+    function addEventListenerForIFrameAndPromiseOnIframeListening() {
+      return new Promise((resolve, reject) => {
+        const iframeMessageListener = (event) => {
+          const { data } = event;
+
+          if (event.origin !== iframeOrigin) {
+            return;
+          }
+
+          if (data.type === 'listening') {
+            resolve();
+          }
+        }
+
+        window.addEventListener('message', iframeMessageListener);
+      });
+    }
+
+    function insertIFrameIntoDocument() {
+      document.querySelector('#iframe-container')
+        .insertAdjacentHTML('beforeend', `<iframe title="embed" src="https://fast.wistia.io/transcript-edit/embed/?hashedId=${hashedId}" sandbox="allow-scripts allow-same-origin allow-modals" />`);
+    }
+
+    function sendTokenToIframe(tokenFromServer) {
+      document.querySelector('iframe')?.contentWindow?.postMessage({type: 'token', value: tokenFromServer}, iframeOrigin)
+    }
+
+    async function renderIframeWhenReady() {
+      const tokenFromServer = await grabTokenFromServer();
+      const promise = addEventListenerForIFrameAndPromiseOnIframeListening();
+      insertIFrameIntoDocument();
+      await promise;
+      sendTokenToIframe(tokenFromServer);
+    }
+
+    renderIframeWhenReady();
+  </script>
+</body>
+</html>
