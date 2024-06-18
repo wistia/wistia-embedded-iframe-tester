@@ -2,10 +2,10 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import './App.css';
 
-const iframeOrigin = process.env.REACT_APP_IFRAME_EMBED_URL ?? 'https://fast.wistia.com'
-const searchParams = new URL(document.location.toString()).searchParams
-const hashedId = searchParams.get('hashedId') ?? ''
-const serverDomain = process.env.REACT_APP_SERVER_ORIGIN ?? 'http://localhost:5432'
+const iframeOrigin = `https://fast.wistia.${process.env.REACT_APP_WISTIA_TLD}`;
+const searchParams = new URL(document.location.toString()).searchParams;
+const hashedId = searchParams.get('hashedId') ?? '';
+const serverDomain = process.env.REACT_APP_SERVER_ORIGIN;
 
 function App() {
   const [token, setToken] = useState<string | undefined>()

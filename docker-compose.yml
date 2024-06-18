@@ -18,7 +18,7 @@ services:
     command: npm start
     entrypoint: /backend/entrypoint
     environment:
-      - WISTIA_SUBDOMAIN=${WISTIA_SUBDOMAIN:-api.wistia.com}
+      - WISTIA_TLD=${WISTIA_TLD:-com}
       - SERVER_PORT=${SERVER_PORT:-5151}
       - WISTIA_PERMANENT_TOKEN
     extra_hosts:
@@ -32,12 +32,9 @@ services:
     command: npm start
     entrypoint: /frontend/entrypoint
     environment:
-      - REACT_APP_IFRAME_EMBED_URL=${REACT_APP_IFRAME_EMBED_URL:-https://fast.wistia.com}
+      - REACT_APP_WISTIA_TLD=${WISTIA_TLD:-com}
       - REACT_APP_SERVER_ORIGIN=${REACT_APP_SERVER_ORIGIN:-http://localhost:5050}
       - PORT=5252
-    extra_hosts:
-      # Needed if pointing to localhost dev
-      - api.wistia.io:host-gateway
   frontend-vanilla:
     image: nginx:1.23-alpine
     volumes:
