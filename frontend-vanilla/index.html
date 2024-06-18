@@ -19,7 +19,7 @@
   <script>
     const searchParams = new URL(document.location.toString()).searchParams;
     const hashedId = searchParams.get('hashedId') || '';
-    const iframeOrigin = 'https://fast.wistia.io';
+    const iframeOrigin = 'https://fast.wistia.com';
 
     async function grabTokenFromServer() {
       const response = await fetch(`http://localhost:5050/expiring_token/${hashedId}`);
@@ -47,7 +47,7 @@
 
     function insertIFrameIntoDocument() {
       document.querySelector('#iframe-container')
-        .insertAdjacentHTML('beforeend', `<iframe title="embed" src="https://fast.wistia.io/transcript-edit/embed/?hashedId=${hashedId}" sandbox="allow-scripts allow-same-origin allow-modals" />`);
+        .insertAdjacentHTML('beforeend', `<iframe title="embed" src="https://fast.wistia.com/transcript-edit/embed/?hashedId=${hashedId}" sandbox="allow-scripts allow-same-origin allow-modals" />`);
     }
 
     function sendTokenToIframe(tokenFromServer) {

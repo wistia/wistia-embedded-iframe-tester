@@ -5,7 +5,7 @@ an expiring token to expose to the client. To get started:
 
 Create an account in wistia and go to:
 
-`https://<account-key>.wistia.io/account/api`
+`https://<account-key>.wistia.com/account/api`
 
 to create a permanent token. Make sure to store this token somewhere safe.
 
