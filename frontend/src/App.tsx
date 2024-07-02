@@ -5,6 +5,7 @@ import './App.css';
 const iframeOrigin = `https://fast.wistia.${process.env.REACT_APP_WISTIA_TLD}`;
 const searchParams = new URL(document.location.toString()).searchParams;
 const hashedId = searchParams.get('hashedId') ?? '';
+const lang = searchParams.get('lang') ?? '';
 const serverDomain = process.env.REACT_APP_SERVER_ORIGIN;
 
 function App() {
@@ -66,10 +67,13 @@ function App() {
     }
   }, [token, iframeRendered]);
 
+  let url = `${iframeOrigin}/transcript-edit/embed/?hashedId=${hashedId}`
+  url = lang ? `${url}&lang=${lang}` : url
+
   return (
     <div>
       <h1>React in TypeScript embed example</h1>
-      <iframe title="embed" src={`${iframeOrigin}/transcript-edit/embed/?hashedId=${hashedId}`} sandbox="allow-scripts allow-same-origin allow-modals" />
+      <iframe title="embed" src={url} sandbox="allow-scripts allow-same-origin allow-modals" />
     </div>
   );
 }
