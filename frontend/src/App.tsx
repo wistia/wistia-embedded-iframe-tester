@@ -4,9 +4,14 @@ import './App.css';
 
 const iframeOrigin = `https://fast.wistia.${process.env.REACT_APP_WISTIA_TLD}`;
 const searchParams = new URL(document.location.toString()).searchParams;
-const hashedId = searchParams.get('hashedId') ?? '';
-const lang = searchParams.get('lang') ?? '';
 const serverDomain = process.env.REACT_APP_SERVER_ORIGIN;
+
+// Pass along query params from the test app to the iframe
+const constructIframeUrl = () => {
+  const baseUrl = `${iframeOrigin}/transcript-edit/embed/?`;
+  const params = new URLSearchParams(searchParams);
+  return baseUrl + params.toString();
+};
 
 function App() {
   const [token, setToken] = useState<string | undefined>()
@@ -16,6 +21,7 @@ function App() {
     const controller = new AbortController()
 
     async function setTokenFromServer() {
+      const hashedId = searchParams.get('hashedId')
       const response = await fetch(`${serverDomain}/expiring_token/${hashedId}`, { signal: controller.signal })
       const json = await response.json()
       const tokenFromServer = json.token
@@ -67,8 +73,7 @@ function App() {
     }
   }, [token, iframeRendered]);
 
-  let url = `${iframeOrigin}/transcript-edit/embed/?hashedId=${hashedId}`
-  url = lang ? `${url}&lang=${lang}` : url
+  const url = constructIframeUrl();
 
   return (
     <div>
