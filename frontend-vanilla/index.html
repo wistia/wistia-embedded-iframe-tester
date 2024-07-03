@@ -15,17 +15,21 @@
 
 <body>
   <h1>Vanilla JS embed example</h1>
+  <button id="hide-iframe" type="button">Hide iframe</button>
   <div id="iframe-container"></div>
   <script>
     const searchParams = new URL(document.location.toString()).searchParams;
     const hashedId = searchParams.get('hashedId') || '';
-    const iframeOrigin = 'https://fast.wistia.com';
+    const tld = searchParams.get('tld') || 'com';
+    const iframeOrigin = `https://fast.wistia.${tld}`;
 
     async function grabTokenFromServer() {
       const response = await fetch(`http://localhost:5050/expiring_token/${hashedId}`);
       const json = await response.json();
       return  json.token;
     }
+
+    let userIsEditing = false;
 
     function addEventListenerForIFrameAndPromiseOnIframeListening() {
       return new Promise((resolve, reject) => {
@@ -39,6 +43,10 @@
           if (data.type === 'listening') {
             resolve();
           }
+
+          if (data.type === 'editing') {
+            userIsEditing = !!data.value;
+          }
         }
 
         window.addEventListener('message', iframeMessageListener);
@@ -47,7 +55,7 @@
 
     function insertIFrameIntoDocument() {
       document.querySelector('#iframe-container')
-        .insertAdjacentHTML('beforeend', `<iframe title="embed" src="https://fast.wistia.com/transcript-edit/embed/?hashedId=${hashedId}" sandbox="allow-scripts allow-same-origin allow-modals" />`);
+        .insertAdjacentHTML('beforeend', `<iframe title="embed" src="https://fast.wistia.${tld}/transcript-edit/embed/?hashedId=${hashedId}" sandbox="allow-scripts allow-same-origin allow-modals" />`);
     }
 
     function sendTokenToIframe(tokenFromServer) {
@@ -62,7 +70,18 @@
       sendTokenToIframe(tokenFromServer);
     }
 
+    function closeEditor() {
+      if (!userIsEditing || confirm('Are you sure you want to stop editing?')) {
+        document.querySelector('#iframe-container').remove();
+      }
+    }
+
+    function addClickHandlerToButton() {
+      document.querySelector('#hide-iframe').onclick = closeEditor
+    }
+
     renderIframeWhenReady();
+    addClickHandlerToButton();
   </script>
 </body>
 </html>
