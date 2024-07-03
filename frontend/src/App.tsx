@@ -15,7 +15,9 @@ const constructIframeUrl = () => {
 
 function App() {
   const [token, setToken] = useState<string | undefined>()
-  const [iframeRendered, setRendered] = useState<boolean>()
+  const [showIframe, setShowIframe] = useState<boolean>(true)
+  const [iframeRendered, setRendered] = useState<boolean>(false)
+  const [iframeBeingEdited, setIframeBeingEdited] = useState<boolean>(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -58,6 +60,11 @@ function App() {
       if (data.type === 'listening') {
         setRendered(!!data.value);
       }
+
+      if (data.type === 'editing') {
+        console.log(`setting editing to ${!!data.value}`);
+        setIframeBeingEdited(!!data.value);
+      }
     };
 
     window.addEventListener('message', iframeMessageListener);
@@ -75,10 +82,19 @@ function App() {
 
   const url = constructIframeUrl();
 
+  const handleSetShowIframe = () => {
+    const toggledValue = !showIframe;
+
+    if (toggledValue || !iframeBeingEdited || window.confirm("Iframe is being editted, are you sure you want to continue?")) {
+      setShowIframe(toggledValue);
+    }
+  }
+
   return (
     <div>
       <h1>React in TypeScript embed example</h1>
-      <iframe title="embed" src={url} sandbox="allow-scripts allow-same-origin allow-modals" />
+      <button type="button" onClick={handleSetShowIframe}>Click me!</button><br /><br />
+      {showIframe && <iframe title="embed" src={url} sandbox="allow-scripts allow-same-origin allow-modals" />}
     </div>
   );
 }
