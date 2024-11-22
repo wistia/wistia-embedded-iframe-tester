@@ -20,7 +20,7 @@
   <script>
     const searchParams = new URL(document.location.toString()).searchParams;
     const hashedId = searchParams.get('hashedId') || '';
-    const tld = searchParams.get('tld') || 'com';
+    const tld = searchParams.get('tld') || 'net';
     const iframeOrigin = `https://fast.wistia.${tld}`;
 
     async function grabTokenFromServer() {

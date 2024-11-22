@@ -25,12 +25,12 @@ restart docker. For changes to the frontend you just need to refresh the page.
 
 ## Pointing to a different TLD
 
-By default we route all requests to `*.wistia.com`. If you are doing local wistia
+By default we route all requests to `fast.wistia.net` for the iframe and `app.wistia.com` for the token requests. If you are doing local wistia
 development or want to point to staging instead you will need to change this. Simply
 specify a different TLD:
 
 ```sh
 # NOTE: this needs to be a different token than what points to the .com mentioned
 # above.
-WISTIA_PERMANENT_TOKEN=<a-token-you-created-in-appropriate-env> WISTIA_TLD=io docker compose up
+WISTIA_PERMANENT_TOKEN=<a-token-you-created-in-appropriate-env> WISTIA_FRONTEND_TLD=io WISTIA_BACKEND_TLD=io docker compose up
 ```
