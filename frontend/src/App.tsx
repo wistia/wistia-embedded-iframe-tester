@@ -2,7 +2,8 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import './App.css';
 
-const iframeOrigin = `https://fast.wistia.${process.env.REACT_APP_WISTIA_TLD}`;
+const branchSuffix = process.env.REACT_APP_BRANCH_DEPLOY_PR_NUMBER ? `-branch-${process.env.REACT_APP_BRANCH_DEPLOY_PR_NUMBER}` : '';
+const iframeOrigin = `https://fast${branchSuffix}.wistia.${process.env.REACT_APP_WISTIA_TLD}`;
 const searchParams = new URL(document.location.toString()).searchParams;
 const serverDomain = process.env.REACT_APP_SERVER_ORIGIN;
 

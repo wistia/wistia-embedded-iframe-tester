@@ -34,3 +34,11 @@ specify a different TLD:
 # above.
 WISTIA_PERMANENT_TOKEN=<a-token-you-created-in-appropriate-env> WISTIA_FRONTEND_TLD=io WISTIA_BACKEND_TLD=io docker compose up
 ```
+
+## Pointing to a branch deploy
+
+If you want to test against a branch deploy, you can supply `BRANCH_DEPLOY_PR_NUMBER`:
+
+```sh
+WISTIA_PERMANENT_TOKEN=<a-token-you-created-in-appropriate-env> WISTIA_FRONTEND_TLD=st WISTIA_BACKEND_TLD=st BRANCH_DEPLOY_PR_NUMBER=<pr-number> docker compose up
+```

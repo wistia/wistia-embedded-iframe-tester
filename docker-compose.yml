@@ -21,6 +21,7 @@ services:
       - WISTIA_BACKEND_TLD=${WISTIA_BACKEND_TLD:-com}
       - SERVER_PORT=${SERVER_PORT:-5151}
       - WISTIA_PERMANENT_TOKEN
+      - BRANCH_DEPLOY_PR_NUMBER
     extra_hosts:
       # Needed if pointing to localhost dev
       - api.wistia.io:host-gateway
@@ -35,6 +36,7 @@ services:
       - REACT_APP_WISTIA_TLD=${WISTIA_FRONTEND_TLD:-net}
       - REACT_APP_SERVER_ORIGIN=${REACT_APP_SERVER_ORIGIN:-http://localhost:5050}
       - PORT=5252
+      - REACT_APP_BRANCH_DEPLOY_PR_NUMBER=${BRANCH_DEPLOY_PR_NUMBER}
   frontend-vanilla:
     image: nginx:1.23-alpine
     volumes:
