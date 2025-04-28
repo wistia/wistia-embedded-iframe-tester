@@ -5,7 +5,8 @@ import { Request, Response, NextFunction } from 'express';
 const app = express();
 const port = Number(process.env.SERVER_PORT);
 const permanentToken = process.env.WISTIA_PERMANENT_TOKEN
-const wistiaHost = `api.wistia.${process.env.WISTIA_BACKEND_TLD}`;
+const branchSuffix = process.env.BRANCH_DEPLOY_PR_NUMBER ? `-branch-${process.env.BRANCH_DEPLOY_PR_NUMBER}` : '';
+const wistiaHost = `api${branchSuffix}.wistia.${process.env.WISTIA_BACKEND_TLD}`;
 
 if (!permanentToken) {
   throw new Error('The WISTIA_PERMANENT_TOKEN environment variable must be set')
