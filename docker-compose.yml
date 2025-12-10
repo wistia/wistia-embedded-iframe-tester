@@ -37,6 +37,10 @@ services:
       - REACT_APP_SERVER_ORIGIN=${REACT_APP_SERVER_ORIGIN:-http://localhost:5050}
       - PORT=5252
       - REACT_APP_BRANCH_DEPLOY_PR_NUMBER=${BRANCH_DEPLOY_PR_NUMBER}
+      # WebSocket configuration for HMR behind nginx proxy
+      - WDS_SOCKET_HOST=localhost
+      - WDS_SOCKET_PORT=5050
+      - WDS_SOCKET_PATH=/ws
   frontend-vanilla:
     image: nginx:1.23-alpine
     volumes:
