@@ -14,11 +14,31 @@ const constructIframeUrl = () => {
   return baseUrl + params.toString();
 };
 
+// Modal component for the iframe editor
+const IframeModal = ({ isOpen, onClose, children }: { isOpen: boolean; onClose: () => void; children: React.ReactNode }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Iframe Editor Playground</h2>
+          <button className="modal-close" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [token, setToken] = useState<string | undefined>()
   const [showIframe, setShowIframe] = useState<boolean>(true)
   const [iframeRendered, setRendered] = useState<boolean>(false)
   const [iframeBeingEdited, setIframeBeingEdited] = useState<boolean>(false)
+  const [showModal, setShowModal] = useState<boolean>(false)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -81,6 +101,21 @@ function App() {
     }
   }, [token, iframeRendered]);
 
+  // Handle token for modal iframe
+  useEffect(() => {
+    if (showModal && token) {
+      // Small delay to ensure iframe is loaded
+      const timer = setTimeout(() => {
+        const modalIframe = document.querySelector('.modal-iframe') as HTMLIFrameElement;
+        if (modalIframe?.contentWindow) {
+          modalIframe.contentWindow.postMessage({type: 'token', value: token}, iframeOrigin);
+        }
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showModal, token]);
+
   const url = constructIframeUrl();
 
   const handleSetShowIframe = () => {
@@ -101,8 +136,25 @@ function App() {
   return (
     <div>
       <h1>React in TypeScript embed example</h1>
-      <button type="button" onClick={handleSetShowIframe}>{showIframe ? 'Hide editor' : 'Show editor'}</button><br /><br />
+      <div className="button-container">
+        <button type="button" onClick={handleSetShowIframe}>
+          {showIframe ? 'Hide editor' : 'Show editor'}
+        </button>
+        <button type="button" onClick={() => setShowModal(true)} className="modal-button">
+          Open Editor in Modal
+        </button>
+      </div>
+      <br />
       {showIframe && <iframe title="embed" src={url} sandbox="allow-scripts allow-same-origin allow-modals" />}
+      
+      <IframeModal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <iframe 
+          title="embed-modal" 
+          src={url} 
+          sandbox="allow-scripts allow-same-origin allow-modals"
+          className="modal-iframe"
+        />
+      </IframeModal>
     </div>
   );
 }
